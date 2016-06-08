@@ -148,26 +148,15 @@ function ClientStart() {
     initShaders();
     initBuffers();
     initTexture();
-    InitPlayer1();
-    InitMap1();
-    InitDefaultTexture()
+    InitPlayer(1);
+    InitPlayer2();
+    LoadMapFromJSON(readFile("Maps/Map2.json"));
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.enable(gl.DEPTH_TEST);
 
     drawScene();
     tick();
-}
-
-var defaultTexture;
-
-function InitDefaultTexture() {
-    defaultTexture = gl.createTexture();
-    defaultTexture.image = new Image();
-    defaultTexture.image.onload = function () {
-        handleLoadedTexture(defaultTexture)
-    };
-    defaultTexture.image.src = "img/tiles/map2.png";
 }
 
 var i = 0;
@@ -184,9 +173,9 @@ function drawScene() {
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.bindBuffer(gl.ARRAY_BUFFER, screen_square);
-    gl.bindTexture(gl.TEXTURE_2D, defaultTexture);
+    gl.bindTexture(gl.TEXTURE_2D, mapTexture);
     gl.uniform1i(defaultshader.samplerUniform, 0);
-    
+
     gl.bindBuffer(gl.ARRAY_BUFFER, screen_square);
     gl.vertexAttribPointer(defaultshader.vertexPositionAttribute, screen_square.itemSize, gl.FLOAT, false, 0, 0);
 
@@ -194,9 +183,8 @@ function drawScene() {
     gl.vertexAttribPointer(defaultshader.textureCoordAttribute, screen_UV.itemSize, gl.FLOAT, false, 0, 0);
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, screen_square.numItems);
-    MovePlayer1();
-    //anim();
-    //drawPlayer1(1, 1, 1)
+    MovePlayer(1);
+    MovePlayer2();
 }
 
 function tick() {
