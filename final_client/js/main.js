@@ -2,8 +2,9 @@ var keycode;
 var canvas;
 var gl;
 var screen_square;
-var W_Field = 20;
-var H_Field = 20;
+var screen_UV;
+var W_Field = 32;
+var H_Field = 16;
 var StartTime;
 var Time;
 
@@ -52,6 +53,19 @@ function initBuffers() {
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     screen_square.itemSize = 3;
     screen_square.numItems = 4;
+
+    screen_UV = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, screen_UV);
+    var textureCoords = [
+        0, 1,
+        1, 1,
+        0, 0,
+        1, 0
+    ];
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(textureCoords), gl.STATIC_DRAW);
+    screen_UV.itemSize = 2;
+    screen_UV.numItems = 4;
+
 }
 
 var defaultshader;
@@ -107,6 +121,11 @@ function initShaders() {
 
     defaultshader.vertexPositionAttribute = gl.getAttribLocation(defaultshader, "aVertexPosition");
     gl.enableVertexAttribArray(defaultshader.vertexPositionAttribute);
+
+
+    defaultshader.textureCoordAttribute = gl.getAttribLocation(defaultshader, "aTextureCoord");
+    gl.enableVertexAttribArray(defaultshader.textureCoordAttribute);
+
     defaultshader.samplerUniform = gl.getUniformLocation(defaultshader, "uSampler");
 }
 
@@ -130,12 +149,25 @@ function ClientStart() {
     initBuffers();
     initTexture();
     InitPlayer1();
+    InitMap1();
+    InitDefaultTexture()
 
     gl.clearColor(0.0, 0.0, 0.0, 1.0);
     gl.enable(gl.DEPTH_TEST);
 
     drawScene();
     tick();
+}
+
+var defaultTexture;
+
+function InitDefaultTexture() {
+    defaultTexture = gl.createTexture();
+    defaultTexture.image = new Image();
+    defaultTexture.image.onload = function () {
+        handleLoadedTexture(defaultTexture)
+    };
+    defaultTexture.image.src = "img/tiles/map2.png";
 }
 
 var i = 0;
@@ -152,7 +184,15 @@ function drawScene() {
     gl.viewport(0, 0, gl.viewportWidth, gl.viewportHeight);
     gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
     gl.bindBuffer(gl.ARRAY_BUFFER, screen_square);
+    gl.bindTexture(gl.TEXTURE_2D, defaultTexture);
+    gl.uniform1i(defaultshader.samplerUniform, 0);
+    
+    gl.bindBuffer(gl.ARRAY_BUFFER, screen_square);
     gl.vertexAttribPointer(defaultshader.vertexPositionAttribute, screen_square.itemSize, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, screen_UV);
+    gl.vertexAttribPointer(defaultshader.textureCoordAttribute, screen_UV.itemSize, gl.FLOAT, false, 0, 0);
+
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, screen_square.numItems);
     MovePlayer1();
     //anim();
