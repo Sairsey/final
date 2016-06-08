@@ -1,8 +1,22 @@
+var keycode;
 var canvas;
 var gl;
 var screen_square;
 var W_Field = 20;
 var H_Field = 20;
+var StartTime;
+var Time;
+
+function InitTime() {
+    var date = new Date();
+    StartTime = date.getTime();
+}
+
+function TimeUpdate() {
+    var date = new Date();
+    Time = date.getTime() - StartTime;
+}
+
 
 function initCanvas() {
     var width = 32 * W_Field;
@@ -18,7 +32,7 @@ function initGL(canvas) {
         gl.viewportWidth = canvas.width;
         gl.viewportHeight = canvas.height;
         gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
-        gl.enable ( gl.BLEND ) ;
+        gl.enable(gl.BLEND);
     } catch (e) {
     }
     if (!gl) {
@@ -30,10 +44,10 @@ function initBuffers() {
     screen_square = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, screen_square);
     var vertices = [
-        -1.0, 1.0, 0.3,
-        1.0, 1.0, 0.3,
-        -1.0, -1.0, 0.3,
-        1.0, -1.0, 0.3
+        -1.0, 1.0, 0.5,
+        1.0, 1.0, 0.5,
+        -1.0, -1.0, 0.5,
+        1.0, -1.0, 0.5
     ];
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
     screen_square.itemSize = 3;
@@ -79,12 +93,12 @@ function getShader(gl, path, type) {
 function initShaders() {
     var fragmentShader = getShader(gl, "shaders/default/default.frag", "frag");
     var vertexShader = getShader(gl, "shaders/default/default.vert", "vert");
-    
+
     defaultshader = gl.createProgram();
     gl.attachShader(defaultshader, fragmentShader);
     gl.attachShader(defaultshader, vertexShader);
     gl.linkProgram(defaultshader);
-    
+
     if (!gl.getProgramParameter(defaultshader, gl.LINK_STATUS)) {
         alert("Could not initialise default shader");
     }
@@ -105,29 +119,33 @@ function handleLoadedTexture(texture) {
     gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
-function initTexture(){
- }
+function initTexture() {
+}
 
- function ClientStart() {
-     initCanvas();
-     initGL(canvas);
-     initShaders();
-     initBuffers();
-     initTexture();
-     InitPlayer1();
+function ClientStart() {
+    initCanvas();
+    initGL(canvas);
+    InitTime();
+    initShaders();
+    initBuffers();
+    initTexture();
+    InitPlayer1();
 
-     gl.clearColor(0.0, 0.0, 0.0, 1.0);
-     gl.enable(gl.DEPTH_TEST);
+    gl.clearColor(0.0, 0.0, 0.0, 1.0);
+    gl.enable(gl.DEPTH_TEST);
 
-     drawScene();
-     tick();
- }
+    drawScene();
+    tick();
+}
 
 var i = 0;
 function anim()
 {
-    i++;
-    drawPlayer1(11, i % 4 + 1);
+    if (Time % 1 == 0)
+    {
+        i++;
+    }
+    drawPlayer1(i % 20 + 1, i % 20 + 1, i % 4 + 1 + 12);
 }
 
 function drawScene() {
@@ -136,11 +154,13 @@ function drawScene() {
     gl.bindBuffer(gl.ARRAY_BUFFER, screen_square);
     gl.vertexAttribPointer(defaultshader.vertexPositionAttribute, screen_square.itemSize, gl.FLOAT, false, 0, 0);
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, screen_square.numItems);
-    anim();
-    //drawPlayer1(11, 8)
+    MovePlayer1();
+    //anim();
+    //drawPlayer1(1, 1, 1)
 }
 
 function tick() {
     window.requestAnimationFrame(tick);
+    TimeUpdate();
     drawScene();
 }

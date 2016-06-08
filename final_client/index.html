@@ -3,8 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <title>Final client</title>
+    <script type="text/javascript">
+        document.onkeydown = function checkKeycode(event)
+        {
+            if(!event) var event = window.event;
+            if (event.keyCode) keycode = event.keyCode; // IE
+            else if(event.which) keycode = event.which; // all browsers
+        }
+        document.onkeyup = function EndKey() {
+            keycode = -1;
+        }
+    </script>
     <script type="text/javascript" src="js/main.js"></script>
     <script type="text/javascript" src="js/Player1.js"></script>
+    <script type="text/javascript" src="js/libs/glMatrix-0.9.5.min.js"></script>
 </head>
 <body onload="ClientStart()">
 <canvas id = "canvas" color="0xffffff"></canvas>
