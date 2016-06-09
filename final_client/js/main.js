@@ -138,16 +138,12 @@ function handleLoadedTexture(texture) {
     gl.bindTexture(gl.TEXTURE_2D, null);
 }
 
-function initTexture() {
-}
-
 function ClientStart() {
     initCanvas();
     initGL(canvas);
     InitTime();
     initShaders();
     initBuffers();
-    initTexture();
     InitPlayer(1);
     InitPlayer2();
     LoadMapFromJSON(readFile("Maps/Map2.json"));
@@ -157,16 +153,6 @@ function ClientStart() {
 
     drawScene();
     tick();
-}
-
-var i = 0;
-function anim()
-{
-    if (Time % 1 == 0)
-    {
-        i++;
-    }
-    drawPlayer1(i % 20 + 1, i % 20 + 1, i % 4 + 1 + 12);
 }
 
 function drawScene() {

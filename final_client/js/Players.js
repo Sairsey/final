@@ -19,7 +19,10 @@ function InitPlayer(no) {
     Players[no].active = true;
     Players[no].period = 0;
     Players[no].UV = [];
+    Players[no].textnick = Object();
     Players[no].src = "img/sprites/player" + String(no) + ".png";
+    Players[no].name = "Player_" + String(no);
+    InitPlayerText(no);
     InitPlayerBuffer(no);
     InitPlayerShader(no);
     InitPlayerTexture(no);
@@ -295,6 +298,8 @@ function DrawUV(no, nouv) {
 
     gl.drawArrays(gl.TRIANGLE_STRIP, 0, Players[no].rect.numItems);
     gl.useProgram(defaultshader);
+    if (Players[no].pos.z == 0.2)
+        drawText(no);
 }
 
 function MovePlayer( no ) {
