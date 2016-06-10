@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Final client</title>
+</head>
+<body>
+<canvas id = "canvas" color="0xffffff"></canvas>
+<script type="text/javascript">
+    document.onkeydown = function checkKeycode(event)
+    {
+        if(!event) var event = window.event;
+        if (event.keyCode) keycode = event.keyCode; // IE
+        else if(event.which) keycode = event.which; // all browser
+    }
+    document.onkeyup = function EndKey() {
+        keycode = -1;
+    }
+</script>
+<script type="text/javascript" src="js/libs/Sokets.io.js"></script>
+<script type="text/javascript" src="js/libs/jquery.js"></script>
+<script type="text/javascript" src="js/main.js"></script>
+<script type="text/javascript" src="js/Players.js"></script>
+<script type="text/javascript" src="js/Maps.js"></script>
+<script type="text/javascript" src="js/DrawText.js"></script>
+<script type="text/javascript" src="js/libs/glMatrix-0.9.5.min.js"></script>
+<script type="text/javascript">
+    ClientStart();
+</script>
+</body>
+</html>
